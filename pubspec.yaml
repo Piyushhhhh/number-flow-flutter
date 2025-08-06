@@ -10,12 +10,7 @@ topics:
   - counter
   - number
   - formatting
-  - ui
-  - material-design
   - widgets
-  - flutter-widget
-  - intl
-  - locale
 
 environment:
   sdk: '>=2.17.0 <4.0.0'
