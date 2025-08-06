@@ -2,7 +2,6 @@
 
 [![pub package](https://img.shields.io/pub/v/flutter_number_flow.svg)](https://pub.dev/packages/flutter_number_flow)
 [![pub points](https://img.shields.io/pub/points/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
-[![popularity](https://img.shields.io/pub/popularity/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
 [![likes](https://img.shields.io/pub/likes/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
