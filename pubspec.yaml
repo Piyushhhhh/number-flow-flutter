@@ -1,0 +1,20 @@
+name: number_flow
+description: A Flutter widget that animates number changes with customizable animation styles and formatting options.
+version: 0.1.0
+homepage: https://github.com/example/number_flow
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:

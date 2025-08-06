@@ -1,0 +1,22 @@
+name: number_flow_example
+description: Example app demonstrating the NumberFlow widget capabilities.
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  number_flow:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
