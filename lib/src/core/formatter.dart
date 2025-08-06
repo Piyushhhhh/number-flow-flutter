@@ -1,5 +1,5 @@
+import 'package:flutter_number_flow/flutter_number_flow.dart';
 import 'package:intl/intl.dart';
-import '../../number_flow.dart';
 
 /// Configuration for number formatting
 /// Configuration class for formatting numbers in [NumberFlow] widgets.

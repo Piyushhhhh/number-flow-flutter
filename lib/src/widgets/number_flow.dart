@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../number_flow.dart';
+import 'package:flutter_number_flow/flutter_number_flow.dart';
 import '../core/diff.dart';
 import '../render/glyph_stack.dart';
 import '../render/mask.dart';

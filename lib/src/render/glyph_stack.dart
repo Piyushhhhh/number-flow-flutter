@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../number_flow.dart';
+import 'package:flutter_number_flow/flutter_number_flow.dart';
 import '../core/metrics_cache.dart';
 
 /// Animated presenter for individual glyphs with different animation styles

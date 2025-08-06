@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_number_flow/number_flow.dart';
+import 'package:flutter_number_flow/flutter_number_flow.dart';
 
 void main() {
   group('NumberFlow Widget Tests', () {
