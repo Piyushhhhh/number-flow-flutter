@@ -94,6 +94,7 @@ class _ScrubTimelineScreenState extends State<ScrubTimelineScreen> {
                 format: const NumberFlowFormat(
                   prefix: '\$',
                   notation: NumberNotation.compact,
+                  maximumFractionDigits: 2,
                 ),
                 textStyle: const TextStyle(
                   fontSize: 56,

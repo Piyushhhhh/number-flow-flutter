@@ -1,191 +1,370 @@
 # Flutter Number Flow
 
-A Flutter widget that animates number changes with smooth, customizable transitions. Perfect for displaying animated counters, currency values, statistics, and more.
-
 [![pub package](https://img.shields.io/pub/v/flutter_number_flow.svg)](https://pub.dev/packages/flutter_number_flow)
 [![pub points](https://img.shields.io/pub/points/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
 [![popularity](https://img.shields.io/pub/popularity/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
 [![likes](https://img.shields.io/pub/likes/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+A beautiful Flutter widget that animates number changes with smooth, customizable transitions. Perfect for displaying animated counters, currency values, statistics, and more with a professional, polished look.
 
-- 🎯 **Multiple Animation Styles**: slide, spin, and crossFade animations
-- 🌍 **Locale-Aware Formatting**: Support for different locales, currencies, and number formats
-- 📊 **Compact Notation**: Automatic formatting for large numbers (K, M, B)
-- 🔄 **Group Synchronization**: Animate multiple NumberFlow widgets in perfect sync
-- 🎛️ **Manual Control**: Scrub through animations with timeline control
-- ⚡ **Performance Optimized**: Text metrics caching and tabular figures for stability
-- ♿ **Accessibility**: Built-in semantics support
-- 🎨 **Customizable**: Full control over styling, duration, curves, and alignment
+## ✨ Features
 
-## Quick Start
+- 🎯 **Smooth Number Animations**: Animate only the digits that change, keeping unchanged digits stable
+- 🎨 **Multiple Animation Styles**: Choose between slide and crossFade animations for different visual effects
+- 🌍 **Locale-Aware Formatting**: Support for different locales, currencies, and number formats using `intl`
+- 📊 **Compact Notation**: Display large numbers in compact format (1.2K, 1.5M, 2.1B)
+- ⚡ **High Performance**: Optimized with text metrics caching and tabular figures for consistent layout
+- 🎛️ **Group Synchronization**: Synchronize animations across multiple NumberFlow widgets
+- 🎮 **Manual Control**: Drive animations manually with scrub progress for timeline controls
+- ♿ **Accessibility**: Proper semantics support for screen readers
+- 🎭 **Customizable**: Full control over text styles, animation duration, and curves
+- 📱 **Material 3**: Built with Material Design 3 principles
 
-Add NumberFlow to your `pubspec.yaml`:
+## 📱 Demo
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="example/assets/demo_app.gif" alt="Mobile Demo" width="300"/>
+      <br/>
+      <strong>Mobile App</strong>
+    </td>
+    <td align="center">
+      <img src="example/assets/demo_web.gif" alt="Web Demo" width="400"/>
+      <br/>
+      <strong>Web App</strong>
+    </td>
+  </tr>
+</table>
+
+## 📱 Live Demo
+
+Try the [interactive web demo](https://flutter_number_flow_demo.web.app) to see all features in action.
+
+## 🚀 Quick Start
+
+### Installation
+
+Add `flutter_number_flow` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
   flutter_number_flow: ^0.1.0
 ```
 
-## Basic Usage
+Then run:
+
+```bash
+flutter pub get
+```
+
+### Basic Usage
 
 ```dart
+import 'package:flutter/material.dart';
 import 'package:flutter_number_flow/number_flow.dart';
 
+class CounterExample extends StatefulWidget {
+  @override
+  _CounterExampleState createState() => _CounterExampleState();
+}
+
+class _CounterExampleState extends State<CounterExample> {
+  double _value = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            NumberFlow(
+              value: _value,
+              textStyle: const TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () => setState(() => _value += 1),
+              child: const Text('Increment'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## 🎨 Animation Styles
+
+### Slide Animation
+Numbers slide vertically when changing, creating a smooth rolling effect:
+
+```dart
 NumberFlow(
   value: 1234.56,
-  textStyle: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+  animationStyle: NumberFlowAnimation.slide,
+  duration: const Duration(milliseconds: 600),
 )
 ```
 
-## Advanced Usage
+### CrossFade Animation
+Numbers fade between old and new values for a subtle transition:
+
+```dart
+NumberFlow(
+  value: 1234.56,
+  animationStyle: NumberFlowAnimation.crossFade,
+  duration: const Duration(milliseconds: 400),
+)
+```
+
+## 🌍 Formatting & Localization
 
 ### Currency Formatting
 
 ```dart
 NumberFlow(
   value: 1234.56,
-  previousValue: 1000.00,
-  format: NumberFlowFormat(
+  format: const NumberFlowFormat(
     prefix: '\$',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   ),
-  animationStyle: NumberFlowAnimation.slide,
-  duration: Duration(milliseconds: 800),
+  textStyle: const TextStyle(
+    fontSize: 32,
+    color: Colors.green,
+    fontWeight: FontWeight.bold,
+  ),
 )
 ```
 
 ### Compact Notation
 
+Display large numbers in a readable format:
+
 ```dart
 NumberFlow(
-  value: 1234567,
-  format: NumberFlowFormat(
+  value: 1500000,
+  format: const NumberFlowFormat(
     notation: NumberNotation.compact,
+    maximumFractionDigits: 1,
   ),
-  // Displays as "1.2M"
-)
+) // Displays "1.5M"
 ```
+
+### Locale Support
+
+```dart
+NumberFlow(
+  value: 1234.56,
+  format: const NumberFlowFormat(
+    locale: 'de_DE', // German locale
+    minimumFractionDigits: 2,
+  ),
+) // Displays "1.234,56"
+```
+
+## 🎛️ Advanced Features
 
 ### Group Synchronization
 
+Synchronize animations across multiple widgets:
+
 ```dart
 NumberFlowGroupProvider(
-  groupKey: 'dashboard',
+  groupKey: 'financials',
+  duration: const Duration(milliseconds: 800),
   child: Column(
     children: [
-      NumberFlow(value: revenue, groupKey: 'dashboard'),
-      NumberFlow(value: expenses, groupKey: 'dashboard'),
-      NumberFlow(value: profit, groupKey: 'dashboard'),
+      NumberFlow(
+        value: revenue,
+        groupKey: 'financials',
+        format: const NumberFlowFormat(prefix: '\$'),
+      ),
+      NumberFlow(
+        value: expenses,
+        groupKey: 'financials',
+        format: const NumberFlowFormat(prefix: '\$'),
+      ),
     ],
   ),
 )
 ```
 
-### Manual Timeline Control
+### Manual Animation Control
+
+Drive animations manually for timeline scrubbing:
 
 ```dart
-NumberFlow(
-  value: endValue,
-  previousValue: startValue,
-  scrubProgress: sliderValue, // 0.0 to 1.0
-)
+class ScrubExample extends StatefulWidget {
+  @override
+  _ScrubExampleState createState() => _ScrubExampleState();
+}
+
+class _ScrubExampleState extends State<ScrubExample> {
+  double _progress = 0.0;
+  final double _startValue = 0;
+  final double _endValue = 1000000;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentValue = _startValue + (_endValue - _startValue) * _progress;
+    
+    return Column(
+      children: [
+        NumberFlow(
+          value: currentValue,
+          scrubProgress: _progress,
+          format: const NumberFlowFormat(
+            prefix: '\$',
+            notation: NumberNotation.compact,
+          ),
+        ),
+        Slider(
+          value: _progress,
+          onChanged: (value) => setState(() => _progress = value),
+        ),
+      ],
+    );
+  }
+}
 ```
 
-## API Reference
+## 📋 API Reference
 
 ### NumberFlow Widget
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `value` | `num` | required | Current number value |
-| `previousValue` | `num?` | null | Previous value for animation |
-| `textStyle` | `TextStyle?` | null | Text styling |
-| `duration` | `Duration` | 600ms | Animation duration |
-| `curve` | `Curve` | easeInOut | Animation curve |
-| `animationStyle` | `NumberFlowAnimation` | slide | Animation type |
-| `format` | `NumberFlowFormat?` | null | Number formatting |
-| `textAlign` | `TextAlign` | center | Text alignment |
-| `groupKey` | `String?` | null | Group synchronization key |
-| `scrubProgress` | `double?` | null | Manual progress (0-1) |
-| `enableMask` | `bool` | true | Enable edge masking |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `value` | `num` | required | Current number value to display |
+| `previousValue` | `num?` | `null` | Previous value for animation (auto-detected if null) |
+| `textStyle` | `TextStyle?` | `null` | Text style for the number display |
+| `animationStyle` | `NumberFlowAnimation` | `slide` | Animation style (slide or crossFade) |
+| `duration` | `Duration` | `600ms` | Animation duration |
+| `curve` | `Curve` | `easeInOut` | Animation curve |
+| `format` | `NumberFlowFormat?` | `null` | Number formatting options |
+| `textAlign` | `TextAlign` | `center` | Text alignment |
+| `groupKey` | `String?` | `null` | Group key for synchronization |
+| `scrubProgress` | `double?` | `null` | Manual animation progress (0.0-1.0) |
+| `enableMask` | `bool` | `true` | Enable edge masking for smooth clipping |
 
-### NumberFlowAnimation Enum
+### NumberFlowFormat
 
-- `NumberFlowAnimation.slide` - Slide animation (default)
-- `NumberFlowAnimation.spin` - 3D spin animation  
-- `NumberFlowAnimation.crossFade` - Cross-fade animation
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `locale` | `String?` | `null` | Locale for number formatting |
+| `notation` | `NumberNotation` | `standard` | Number notation (standard or compact) |
+| `prefix` | `String?` | `null` | Text to display before the number |
+| `suffix` | `String?` | `null` | Text to display after the number |
+| `minimumFractionDigits` | `int?` | `null` | Minimum decimal places |
+| `maximumFractionDigits` | `int?` | `null` | Maximum decimal places |
 
-### NumberFlowFormat Class
-
-```dart
-NumberFlowFormat({
-  String? locale,              // e.g., 'en_US', 'de_DE'
-  NumberNotation notation,     // standard or compact
-  String? prefix,              // e.g., '$', '€'
-  String? suffix,              // e.g., '%', '°C'
-  int? minimumFractionDigits,  // Min decimal places
-  int? maximumFractionDigits,  // Max decimal places
-})
-```
-
-### NumberFlowGroup
-
-Use `NumberFlowGroupProvider` to create synchronized animation groups:
+### NumberFlowAnimation
 
 ```dart
-NumberFlowGroupProvider(
-  groupKey: 'unique-group-id',
-  duration: Duration(milliseconds: 800),
-  curve: Curves.easeInOut,
-  child: YourWidget(),
-)
+enum NumberFlowAnimation {
+  slide,     // Vertical sliding animation
+  crossFade, // Opacity transition animation
+}
 ```
 
-## Examples
+### NumberNotation
 
-The package includes a comprehensive example app demonstrating:
+```dart
+enum NumberNotation {
+  standard, // 1,234,567
+  compact,  // 1.2M
+}
+```
 
-1. **Basics**: Fundamental animations and styles
-2. **Decimals**: Temperature monitors and stock prices
-3. **Compact**: Social media followers and download counters
-4. **Group Sync**: Financial dashboard with synchronized updates
-5. **Scrub Timeline**: Manual animation control
+## 🎯 Performance
 
-Run the example:
+Flutter Number Flow is optimized for performance:
+
+- **Text Metrics Caching**: Glyph dimensions are cached to avoid repeated calculations
+- **Tabular Figures**: Uses `FontFeature.tabularFigures()` for consistent digit widths
+- **Efficient Diffing**: Only animates digits that actually change
+- **Minimal Rebuilds**: Smart widget composition minimizes unnecessary rebuilds
+
+## ♿ Accessibility
+
+The widget follows Flutter accessibility best practices:
+
+- **Semantic Labels**: Screen readers announce the complete number value
+- **Proper Focus**: Supports keyboard navigation and focus management
+- **High Contrast**: Works well with system accessibility settings
+
+## 🧪 Testing
+
+The package includes comprehensive tests:
 
 ```bash
-cd example
-flutter run
+flutter test
 ```
 
-## Performance
+Run golden tests to verify visual output:
 
-NumberFlow is optimized for smooth animations:
+```bash
+flutter test --update-goldens
+```
 
-- **Text Metrics Caching**: Avoids repeated TextPainter measurements
-- **Tabular Figures**: Uses monospace digits for consistent width
-- **Minimal Rebuilds**: Only animates changed characters
-- **Hardware Acceleration**: Leverages GPU for smooth animations
+## 🤝 Contributing
 
-## Accessibility
+Contributions are welcome! Please read our [contributing guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
 
-NumberFlow includes built-in accessibility support:
+### Development Setup
 
-- Semantic labels for screen readers
-- Proper focus management
-- High contrast support
-- Reduced motion respect
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/example/flutter_number_flow.git
+   cd flutter_number_flow
+   ```
 
-## Contributing
+2. Get dependencies:
+   ```bash
+   flutter pub get
+   ```
 
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+3. Run the example:
+   ```bash
+   cd example
+   flutter run
+   ```
 
-## License
+4. Run tests:
+   ```bash
+   flutter test
+   ```
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Changelog
+## 🙏 Acknowledgments
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
+- Inspired by the [number-flow](https://github.com/barvian/number-flow) React library
+- Built with [Flutter](https://flutter.dev) and [Dart](https://dart.dev)
+- Uses the [intl](https://pub.dev/packages/intl) package for internationalization
+
+## 📊 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and migration guides.
+
+## 💬 Support
+
+- 📖 [Documentation](https://pub.dev/documentation/flutter_number_flow/latest/)
+- 🐛 [Issue Tracker](https://github.com/example/flutter_number_flow/issues)
+- 💬 [Discussions](https://github.com/example/flutter_number_flow/discussions)
+- 📧 [Email Support](mailto:support@example.com)
+
+---
+
+<p align="center">
+  Made with ❤️ by the Flutter Number Flow team
+</p>

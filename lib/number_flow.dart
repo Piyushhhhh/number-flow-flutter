@@ -14,9 +14,6 @@ enum NumberFlowAnimation {
   /// Slides digits vertically during transitions
   slide,
 
-  /// Spins/rotates digits during transitions
-  spin,
-
   /// Cross-fades between old and new digits
   crossFade,
 }

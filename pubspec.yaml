@@ -1,7 +1,22 @@
 name: flutter_number_flow
-description: A Flutter widget that animates number changes with customizable animation styles and formatting options.
+description: A beautiful Flutter widget that animates number changes with smooth transitions. Perfect for animated counters, currency values, and statistics with locale support.
 version: 0.1.0
-homepage: https://github.com/example/number_flow
+homepage: https://github.com/example/flutter_number_flow
+repository: https://github.com/example/flutter_number_flow
+issue_tracker: https://github.com/example/flutter_number_flow/issues
+documentation: https://pub.dev/documentation/flutter_number_flow/latest/
+
+topics:
+  - animation
+  - counter
+  - number
+  - formatting
+  - ui
+  - material-design
+  - widgets
+  - flutter-widget
+  - intl
+  - locale
 
 environment:
   sdk: '>=2.17.0 <4.0.0'

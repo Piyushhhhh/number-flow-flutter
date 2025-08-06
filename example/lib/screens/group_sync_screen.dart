@@ -150,6 +150,7 @@ class _GroupSyncScreenState extends State<GroupSyncScreen> {
                     format: const NumberFlowFormat(
                       prefix: '\$',
                       notation: NumberNotation.compact,
+                      maximumFractionDigits: 2,
                     ),
                     textStyle: TextStyle(
                       fontSize: 24,

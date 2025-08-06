@@ -16,9 +16,8 @@ class NumberFlowGroup extends InheritedWidget {
   final AnimationController controller;
 
   /// Get the NumberFlowGroup from context
-  static NumberFlowGroup? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<NumberFlowGroup>();
-  }
+  static NumberFlowGroup? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<NumberFlowGroup>();
 
   /// Check if a NumberFlowGroup with the given key exists in context
   static NumberFlowGroup? findByKey(BuildContext context, String groupKey) {
@@ -27,9 +26,8 @@ class NumberFlowGroup extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(NumberFlowGroup oldWidget) {
-    return groupKey != oldWidget.groupKey || controller != oldWidget.controller;
-  }
+  bool updateShouldNotify(NumberFlowGroup oldWidget) =>
+      groupKey != oldWidget.groupKey || controller != oldWidget.controller;
 }
 
 /// Provider widget that creates and manages a NumberFlowGroup
@@ -87,13 +85,11 @@ class _NumberFlowGroupProviderState extends State<NumberFlowGroupProvider>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return NumberFlowGroup(
-      groupKey: widget.groupKey,
-      controller: _controller,
-      child: widget.child,
-    );
-  }
+  Widget build(BuildContext context) => NumberFlowGroup(
+        groupKey: widget.groupKey,
+        controller: _controller,
+        child: widget.child,
+      );
 
   /// Start animation for all NumberFlow widgets in this group
   void startGroupAnimation() {

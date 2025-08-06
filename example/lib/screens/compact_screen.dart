@@ -9,9 +9,9 @@ class CompactScreen extends StatefulWidget {
 }
 
 class _CompactScreenState extends State<CompactScreen> {
-  double _followers = 1234567;
+  double _followers = 1234567.89;
   double? _previousFollowers;
-  double _downloads = 987654321;
+  double _downloads = 987654321.23;
   double? _previousDownloads;
 
   void _updateFollowers() {
@@ -66,6 +66,7 @@ class _CompactScreenState extends State<CompactScreen> {
                       previousValue: _previousFollowers,
                       format: const NumberFlowFormat(
                         notation: NumberNotation.compact,
+                        maximumFractionDigits: 2,
                       ),
                       textStyle: const TextStyle(
                         fontSize: 56,
@@ -121,13 +122,14 @@ class _CompactScreenState extends State<CompactScreen> {
                       previousValue: _previousDownloads,
                       format: const NumberFlowFormat(
                         notation: NumberNotation.compact,
+                        maximumFractionDigits: 2,
                       ),
                       textStyle: const TextStyle(
                         fontSize: 56,
                         fontWeight: FontWeight.bold,
                         color: Colors.purple,
                       ),
-                      animationStyle: NumberFlowAnimation.spin,
+                      animationStyle: NumberFlowAnimation.slide,
                     ),
                   ),
 

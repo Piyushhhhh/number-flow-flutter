@@ -1,12 +1,35 @@
 import 'package:flutter/material.dart';
 import '../../number_flow.dart';
-import '../core/formatter.dart';
 import '../core/diff.dart';
 import '../render/glyph_stack.dart';
 import '../render/mask.dart';
-import 'number_flow_group.dart';
 
-/// A widget that animates number changes with customizable styles and formatting
+/// A Flutter widget that animates number changes with smooth, customizable transitions.
+///
+/// The [NumberFlow] widget displays numbers with smooth animations when the value changes.
+/// It supports multiple animation styles, locale-aware formatting, and performance optimizations.
+///
+/// Example usage:
+/// ```dart
+/// NumberFlow(
+///   value: 1234.56,
+///   format: const NumberFlowFormat(
+///     prefix: '\$',
+///     minimumFractionDigits: 2,
+///   ),
+///   textStyle: const TextStyle(fontSize: 32),
+///   animationStyle: NumberFlowAnimation.slide,
+/// )
+/// ```
+///
+/// The widget only animates digits that actually change, keeping unchanged digits stable
+/// for a professional appearance. It uses tabular figures for consistent spacing and
+/// caches text metrics for optimal performance.
+///
+/// See also:
+/// * [NumberFlowFormat] for formatting options
+/// * [NumberFlowAnimation] for available animation styles
+/// * [NumberFlowGroupProvider] for synchronizing multiple widgets
 class NumberFlow extends StatefulWidget {
   const NumberFlow({
     super.key,
@@ -151,14 +174,6 @@ class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
     return _localController;
   }
 
-  /// Get the effective animation progress
-  double _getAnimationProgress() {
-    if (widget.scrubProgress != null) {
-      return widget.scrubProgress!.clamp(0.0, 1.0);
-    }
-    return _animation.value;
-  }
-
   /// Update formatted text values and calculate diffs
   void _updateFormattedValues([num? oldValue]) {
     _previousText = _currentText;
@@ -192,9 +207,7 @@ class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
 
     Widget content = AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return _buildNumberDisplay(effectiveTextStyle);
-      },
+      builder: (context, child) => _buildNumberDisplay(effectiveTextStyle),
     );
 
     // Apply text alignment

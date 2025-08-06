@@ -51,52 +51,61 @@ class StringDiffer {
 
     if (oldString.isEmpty) {
       for (int i = 0; i < newString.length; i++) {
-        diffs.add(CharacterDiff(
-          index: i,
-          oldChar: null,
-          newChar: newString[i],
-          changeType: DiffType.inserted,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: i,
+            oldChar: null,
+            newChar: newString[i],
+            changeType: DiffType.inserted,
+          ),
+        );
       }
       return diffs;
     }
 
     if (newString.isEmpty) {
       for (int i = 0; i < oldString.length; i++) {
-        diffs.add(CharacterDiff(
-          index: i,
-          oldChar: oldString[i],
-          newChar: null,
-          changeType: DiffType.deleted,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: i,
+            oldChar: oldString[i],
+            newChar: null,
+            changeType: DiffType.deleted,
+          ),
+        );
       }
       return diffs;
     }
 
     // Find common prefix
     int prefixLength = 0;
-    final minLength = oldString.length < newString.length ? oldString.length : newString.length;
-    while (prefixLength < minLength && oldString[prefixLength] == newString[prefixLength]) {
+    final minLength = oldString.length < newString.length
+        ? oldString.length
+        : newString.length;
+    while (prefixLength < minLength &&
+        oldString[prefixLength] == newString[prefixLength]) {
       prefixLength++;
     }
 
     // Find common suffix
     int suffixLength = 0;
-    int oldEnd = oldString.length - 1;
-    int newEnd = newString.length - 1;
-    while (suffixLength < minLength - prefixLength && 
-           oldString[oldEnd - suffixLength] == newString[newEnd - suffixLength]) {
+    final int oldEnd = oldString.length - 1;
+    final int newEnd = newString.length - 1;
+    while (suffixLength < minLength - prefixLength &&
+        oldString[oldEnd - suffixLength] == newString[newEnd - suffixLength]) {
       suffixLength++;
     }
 
     // Add unchanged prefix
     for (int i = 0; i < prefixLength; i++) {
-      diffs.add(CharacterDiff(
-        index: i,
-        oldChar: oldString[i],
-        newChar: newString[i],
-        changeType: DiffType.unchanged,
-      ));
+      diffs.add(
+        CharacterDiff(
+          index: i,
+          oldChar: oldString[i],
+          newChar: newString[i],
+          changeType: DiffType.unchanged,
+        ),
+      );
     }
 
     // Calculate the changing middle section
@@ -115,53 +124,66 @@ class StringDiffer {
     for (int i = 0; i < suffixLength; i++) {
       final oldIndex = oldString.length - suffixLength + i;
       final newIndex = newString.length - suffixLength + i;
-      diffs.add(CharacterDiff(
-        index: newIndex,
-        oldChar: oldString[oldIndex],
-        newChar: newString[newIndex],
-        changeType: DiffType.unchanged,
-      ));
+      diffs.add(
+        CharacterDiff(
+          index: newIndex,
+          oldChar: oldString[oldIndex],
+          newChar: newString[newIndex],
+          changeType: DiffType.unchanged,
+        ),
+      );
     }
 
     return diffs;
   }
 
   /// Add diffs for the changing middle section
-  static void _addMiddleDiffs(List<CharacterDiff> diffs, String oldMiddle, String newMiddle, int offset) {
-    final maxLength = oldMiddle.length > newMiddle.length ? oldMiddle.length : newMiddle.length;
+  static void _addMiddleDiffs(List<CharacterDiff> diffs, String oldMiddle,
+      String newMiddle, int offset) {
+    final maxLength = oldMiddle.length > newMiddle.length
+        ? oldMiddle.length
+        : newMiddle.length;
 
     for (int i = 0; i < maxLength; i++) {
       final oldChar = i < oldMiddle.length ? oldMiddle[i] : null;
       final newChar = i < newMiddle.length ? newMiddle[i] : null;
 
       if (oldChar == null) {
-        diffs.add(CharacterDiff(
-          index: offset + i,
-          oldChar: null,
-          newChar: newChar,
-          changeType: DiffType.inserted,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: offset + i,
+            oldChar: null,
+            newChar: newChar,
+            changeType: DiffType.inserted,
+          ),
+        );
       } else if (newChar == null) {
-        diffs.add(CharacterDiff(
-          index: offset + i,
-          oldChar: oldChar,
-          newChar: null,
-          changeType: DiffType.deleted,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: offset + i,
+            oldChar: oldChar,
+            newChar: null,
+            changeType: DiffType.deleted,
+          ),
+        );
       } else if (oldChar == newChar) {
-        diffs.add(CharacterDiff(
-          index: offset + i,
-          oldChar: oldChar,
-          newChar: newChar,
-          changeType: DiffType.unchanged,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: offset + i,
+            oldChar: oldChar,
+            newChar: newChar,
+            changeType: DiffType.unchanged,
+          ),
+        );
       } else {
-        diffs.add(CharacterDiff(
-          index: offset + i,
-          oldChar: oldChar,
-          newChar: newChar,
-          changeType: DiffType.modified,
-        ));
+        diffs.add(
+          CharacterDiff(
+            index: offset + i,
+            oldChar: oldChar,
+            newChar: newChar,
+            changeType: DiffType.modified,
+          ),
+        );
       }
     }
   }

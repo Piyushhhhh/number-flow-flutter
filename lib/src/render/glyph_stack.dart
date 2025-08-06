@@ -42,22 +42,16 @@ class _GlyphStackState extends State<GlyphStack> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.animation,
-      builder: (context, child) {
-        return _buildAnimatedGlyph();
-      },
-    );
-  }
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: widget.animation,
+        builder: (context, child) => _buildAnimatedGlyph(),
+      );
 
   /// Build the animated glyph based on the animation style
   Widget _buildAnimatedGlyph() {
     switch (widget.animationStyle) {
       case NumberFlowAnimation.slide:
         return _buildSlideAnimation();
-      case NumberFlowAnimation.spin:
-        return _buildSpinAnimation();
       case NumberFlowAnimation.crossFade:
         return _buildCrossFadeAnimation();
     }
@@ -118,60 +112,6 @@ class _GlyphStackState extends State<GlyphStack> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  /// Build spin animation (3D rotation)
-  Widget _buildSpinAnimation() {
-    final String? oldGlyph = widget.oldGlyph;
-    final String? newGlyph = widget.newGlyph;
-
-    // If no animation needed, just show the current glyph
-    if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
-      final glyph = newGlyph ?? oldGlyph ?? '';
-      return SizedBox(
-        width: _getGlyphWidth(glyph),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            glyph,
-            style: widget.textStyle,
-          ),
-        ),
-      );
-    }
-
-    // Get metrics for consistent sizing
-    final width = _getGlyphWidth(newGlyph);
-    final height = _getGlyphHeight(newGlyph);
-
-    // Animation progress
-    final progress = widget.animation.value;
-
-    // Switch glyph at 50% progress for flip effect
-    final showOld = progress < 0.5;
-    final currentGlyph = showOld ? oldGlyph : newGlyph;
-
-    // Calculate rotation angle (0 to π)
-    final angle = progress * 3.14159;
-
-    // Scale effect to simulate 3D perspective
-    final scale = (1.0 - (progress - 0.5).abs() * 2).clamp(0.3, 1.0);
-
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Transform(
-        alignment: Alignment.center,
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.001) // Add perspective
-          ..rotateX(angle)
-          ..scale(scale),
-        child: Text(
-          currentGlyph,
-          style: widget.textStyle,
         ),
       ),
     );
@@ -242,12 +182,8 @@ class _GlyphStackState extends State<GlyphStack> {
   }
 
   /// Get the width for this glyph using the metrics cache
-  double _getGlyphWidth(String glyph) {
-    return _getGlyphSize(glyph).width;
-  }
+  double _getGlyphWidth(String glyph) => _getGlyphSize(glyph).width;
 
   /// Get the height for this glyph using the metrics cache
-  double _getGlyphHeight(String glyph) {
-    return _getGlyphSize(glyph).height;
-  }
+  double _getGlyphHeight(String glyph) => _getGlyphSize(glyph).height;
 }

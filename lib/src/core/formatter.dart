@@ -2,6 +2,35 @@ import 'package:intl/intl.dart';
 import '../../number_flow.dart';
 
 /// Configuration for number formatting
+/// Configuration class for formatting numbers in [NumberFlow] widgets.
+///
+/// This class provides comprehensive options for formatting numbers including
+/// locale support, decimal places, prefixes/suffixes, and compact notation.
+///
+/// Example usage:
+/// ```dart
+/// // Currency formatting
+/// const NumberFlowFormat(
+///   prefix: '\$',
+///   minimumFractionDigits: 2,
+///   maximumFractionDigits: 2,
+/// )
+///
+/// // Compact notation
+/// const NumberFlowFormat(
+///   notation: NumberNotation.compact,
+///   maximumFractionDigits: 1,
+/// )
+///
+/// // Locale-specific formatting
+/// const NumberFlowFormat(
+///   locale: 'de_DE',
+///   minimumFractionDigits: 2,
+/// )
+/// ```
+///
+/// The formatter uses the `intl` package internally for locale-aware formatting
+/// and supports all standard number formatting options.
 class NumberFlowFormat {
   const NumberFlowFormat({
     this.locale,
@@ -36,23 +65,43 @@ class NumberFormatter {
   NumberFormatter(this.format);
 
   final NumberFlowFormat format;
-  late final NumberFormat _numberFormat;
+  NumberFormat? _numberFormat;
 
   /// Initialize the number formatter
   void initialize() {
-    // TODO: Initialize NumberFormat based on format configuration
-    // - Handle locale
-    // - Handle notation (standard vs compact)
-    // - Handle min/max fraction digits
-    // - Create appropriate NumberFormat instance
+    // Create NumberFormat based on configuration
+    if (format.notation == NumberNotation.compact) {
+      _numberFormat = NumberFormat.compact(locale: format.locale);
+    } else {
+      _numberFormat = NumberFormat(null, format.locale);
+    }
+
+    // Configure fraction digits
+    if (format.minimumFractionDigits != null) {
+      _numberFormat!.minimumFractionDigits = format.minimumFractionDigits!;
+    }
+    if (format.maximumFractionDigits != null) {
+      _numberFormat!.maximumFractionDigits = format.maximumFractionDigits!;
+    }
   }
 
   /// Format a number according to the configuration
   String formatNumber(num value) {
-    // TODO: Format the number using the configured NumberFormat
-    // - Apply prefix/suffix if specified
-    // - Return formatted string
-    return value.toString(); // Placeholder
+    // Initialize if not done already
+    _numberFormat ??= NumberFormat();
+
+    // Format the number
+    String formatted = _numberFormat!.format(value);
+
+    // Add prefix and suffix
+    if (format.prefix != null) {
+      formatted = '${format.prefix}$formatted';
+    }
+    if (format.suffix != null) {
+      formatted = '$formatted${format.suffix}';
+    }
+
+    return formatted;
   }
 
   /// Get the locale string for this formatter
