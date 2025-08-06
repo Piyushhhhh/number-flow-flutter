@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  number_flow:
+  flutter_number_flow:
     path: ../
 
 dev_dependencies:

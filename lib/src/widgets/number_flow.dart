@@ -244,6 +244,8 @@ class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: glyphWidgets,
     );
   }

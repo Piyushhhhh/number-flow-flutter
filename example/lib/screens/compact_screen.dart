@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:number_flow/number_flow.dart';
+import 'package:flutter_number_flow/number_flow.dart';
 
 class CompactScreen extends StatefulWidget {
   const CompactScreen({super.key});

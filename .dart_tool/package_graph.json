@@ -1,10 +1,10 @@
 {
   "roots": [
-    "number_flow"
+    "flutter_number_flow"
   ],
   "packages": [
     {
-      "name": "number_flow",
+      "name": "flutter_number_flow",
       "version": "0.1.0",
       "dependencies": [
         "flutter",

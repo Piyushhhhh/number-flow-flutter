@@ -1,11 +1,11 @@
-# NumberFlow
+# Flutter Number Flow
 
-A Flutter widget that animates number changes with customizable animation styles and locale-aware formatting.
+A Flutter widget that animates number changes with smooth, customizable transitions. Perfect for displaying animated counters, currency values, statistics, and more.
 
-[![pub package](https://img.shields.io/pub/v/number_flow.svg)](https://pub.dev/packages/number_flow)
-[![pub points](https://img.shields.io/pub/points/number_flow)](https://pub.dev/packages/number_flow/score)
-[![popularity](https://img.shields.io/pub/popularity/number_flow)](https://pub.dev/packages/number_flow/score)
-[![likes](https://img.shields.io/pub/likes/number_flow)](https://pub.dev/packages/number_flow/score)
+[![pub package](https://img.shields.io/pub/v/flutter_number_flow.svg)](https://pub.dev/packages/flutter_number_flow)
+[![pub points](https://img.shields.io/pub/points/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
+[![popularity](https://img.shields.io/pub/popularity/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
+[![likes](https://img.shields.io/pub/likes/flutter_number_flow)](https://pub.dev/packages/flutter_number_flow/score)
 
 ## Features
 
@@ -24,13 +24,13 @@ Add NumberFlow to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  number_flow: ^0.1.0
+  flutter_number_flow: ^0.1.0
 ```
 
 ## Basic Usage
 
 ```dart
-import 'package:number_flow/number_flow.dart';
+import 'package:flutter_number_flow/number_flow.dart';
 
 NumberFlow(
   value: 1234.56,

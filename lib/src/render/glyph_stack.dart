@@ -43,13 +43,6 @@ class _GlyphStackState extends State<GlyphStack> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Implement glyph animation based on animation style
-    // - Handle slide animation (vertical movement)
-    // - Handle spin animation (3D rotation)
-    // - Handle crossFade animation (opacity transition)
-    // - Use cached metrics for consistent sizing
-    // - Return appropriate animated widget
-
     return AnimatedBuilder(
       animation: widget.animation,
       builder: (context, child) {
@@ -74,15 +67,18 @@ class _GlyphStackState extends State<GlyphStack> {
   Widget _buildSlideAnimation() {
     final String? oldGlyph = widget.oldGlyph;
     final String? newGlyph = widget.newGlyph;
-    
+
     // If no animation needed, just show the current glyph
     if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
+      final glyph = newGlyph ?? oldGlyph ?? '';
       return SizedBox(
-        width: _getGlyphWidth(newGlyph ?? oldGlyph ?? ''),
-        child: Text(
-          newGlyph ?? oldGlyph ?? '',
-          style: widget.textStyle,
-          textAlign: TextAlign.center,
+        width: _getGlyphWidth(glyph),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            glyph,
+            style: widget.textStyle,
+          ),
         ),
       );
     }
@@ -93,7 +89,7 @@ class _GlyphStackState extends State<GlyphStack> {
 
     // Animation progress
     final progress = widget.animation.value;
-    
+
     // Calculate slide positions
     final oldOffset = Offset(0, -height * progress);
     final newOffset = Offset(0, height * (1 - progress));
@@ -103,6 +99,7 @@ class _GlyphStackState extends State<GlyphStack> {
       height: height,
       child: ClipRect(
         child: Stack(
+          alignment: Alignment.center,
           children: [
             // Old glyph sliding up
             Transform.translate(
@@ -110,7 +107,6 @@ class _GlyphStackState extends State<GlyphStack> {
               child: Text(
                 oldGlyph,
                 style: widget.textStyle,
-                textAlign: TextAlign.center,
               ),
             ),
             // New glyph sliding in from below
@@ -119,7 +115,6 @@ class _GlyphStackState extends State<GlyphStack> {
               child: Text(
                 newGlyph,
                 style: widget.textStyle,
-                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -132,15 +127,18 @@ class _GlyphStackState extends State<GlyphStack> {
   Widget _buildSpinAnimation() {
     final String? oldGlyph = widget.oldGlyph;
     final String? newGlyph = widget.newGlyph;
-    
+
     // If no animation needed, just show the current glyph
     if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
+      final glyph = newGlyph ?? oldGlyph ?? '';
       return SizedBox(
-        width: _getGlyphWidth(newGlyph ?? oldGlyph ?? ''),
-        child: Text(
-          newGlyph ?? oldGlyph ?? '',
-          style: widget.textStyle,
-          textAlign: TextAlign.center,
+        width: _getGlyphWidth(glyph),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            glyph,
+            style: widget.textStyle,
+          ),
         ),
       );
     }
@@ -151,14 +149,14 @@ class _GlyphStackState extends State<GlyphStack> {
 
     // Animation progress
     final progress = widget.animation.value;
-    
+
     // Switch glyph at 50% progress for flip effect
     final showOld = progress < 0.5;
     final currentGlyph = showOld ? oldGlyph : newGlyph;
-    
+
     // Calculate rotation angle (0 to π)
     final angle = progress * 3.14159;
-    
+
     // Scale effect to simulate 3D perspective
     final scale = (1.0 - (progress - 0.5).abs() * 2).clamp(0.3, 1.0);
 
@@ -174,7 +172,6 @@ class _GlyphStackState extends State<GlyphStack> {
         child: Text(
           currentGlyph,
           style: widget.textStyle,
-          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -184,15 +181,18 @@ class _GlyphStackState extends State<GlyphStack> {
   Widget _buildCrossFadeAnimation() {
     final String? oldGlyph = widget.oldGlyph;
     final String? newGlyph = widget.newGlyph;
-    
+
     // If no animation needed, just show the current glyph
     if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
+      final glyph = newGlyph ?? oldGlyph ?? '';
       return SizedBox(
-        width: _getGlyphWidth(newGlyph ?? oldGlyph ?? ''),
-        child: Text(
-          newGlyph ?? oldGlyph ?? '',
-          style: widget.textStyle,
-          textAlign: TextAlign.center,
+        width: _getGlyphWidth(glyph),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            glyph,
+            style: widget.textStyle,
+          ),
         ),
       );
     }
@@ -203,7 +203,7 @@ class _GlyphStackState extends State<GlyphStack> {
 
     // Animation progress
     final progress = widget.animation.value;
-    
+
     // Calculate opacities
     final oldOpacity = 1.0 - progress;
     final newOpacity = progress;
@@ -212,6 +212,7 @@ class _GlyphStackState extends State<GlyphStack> {
       width: width,
       height: height,
       child: Stack(
+        alignment: Alignment.center,
         children: [
           // Old glyph fading out
           Opacity(
@@ -219,7 +220,6 @@ class _GlyphStackState extends State<GlyphStack> {
             child: Text(
               oldGlyph,
               style: widget.textStyle,
-              textAlign: TextAlign.center,
             ),
           ),
           // New glyph fading in
@@ -228,7 +228,6 @@ class _GlyphStackState extends State<GlyphStack> {
             child: Text(
               newGlyph,
               style: widget.textStyle,
-              textAlign: TextAlign.center,
             ),
           ),
         ],

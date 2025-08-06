@@ -164,7 +164,7 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "number_flow",
+      "name": "flutter_number_flow",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.17"

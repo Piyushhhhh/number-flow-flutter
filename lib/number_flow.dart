@@ -1,8 +1,9 @@
-/// A Flutter widget that animates number changes with customizable animation styles and formatting options.
+/// Flutter Number Flow - A Flutter widget that animates number changes with smooth transitions.
 ///
 /// This library provides widgets and utilities for creating smooth number animations
 /// with various animation styles (slide, spin, crossFade) and locale-aware formatting.
-library number_flow;
+/// Perfect for displaying animated counters, currency values, statistics, and more.
+library flutter_number_flow;
 
 export 'src/widgets/number_flow.dart';
 export 'src/core/formatter.dart';
