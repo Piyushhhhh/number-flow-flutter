@@ -25,8 +25,8 @@ We use GitHub to host code, track issues and feature requests, and accept pull r
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/example/flutter_number_flow.git
-   cd flutter_number_flow
+   git clone https://github.com/Piyushhhhh/number-flow-flutter.git
+   cd number-flow-flutter
    ```
 
 2. **Install dependencies**
@@ -63,7 +63,7 @@ We use GitHub to host code, track issues and feature requests, and accept pull r
 - Write unit tests for new functionality
 - Update existing tests when modifying code
 - Run `flutter test` before submitting
-- Include golden tests for visual components
+- Include widget tests for visual behavior
 - Aim for high test coverage
 
 ### Documentation
@@ -75,7 +75,7 @@ We use GitHub to host code, track issues and feature requests, and accept pull r
 
 ## Bug Reports
 
-We use GitHub issues to track bugs. Report a bug by [opening a new issue](https://github.com/example/flutter_number_flow/issues).
+We use GitHub issues to track bugs. Report a bug by [opening a new issue](https://github.com/Piyushhhhh/number-flow-flutter/issues).
 
 **Great Bug Reports** tend to have:
 
@@ -118,7 +118,7 @@ Add any other context about the problem here.
 
 ## Feature Requests
 
-We use GitHub discussions for feature requests. Start a discussion by [opening a new discussion](https://github.com/example/flutter_number_flow/discussions).
+We use GitHub discussions for feature requests. Start a discussion by [opening a new discussion](https://github.com/Piyushhhhh/number-flow-flutter/discussions).
 
 **Great Feature Requests** include:
 
@@ -165,8 +165,7 @@ Contributors will be recognized in the following ways:
 
 Don't hesitate to reach out:
 
-- 💬 [GitHub Discussions](https://github.com/example/flutter_number_flow/discussions)
-- 📧 [Email](mailto:support@example.com)
+- 💬 [GitHub Discussions](https://github.com/Piyushhhhh/number-flow-flutter/discussions)
 - 🐦 [Twitter](https://twitter.com/flutter_number_flow)
 
 Thank you for contributing! 🚀

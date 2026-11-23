@@ -1,3 +1,5 @@
+import 'package:characters/characters.dart';
+
 /// Character-level difference calculation for efficient number animations
 class CharacterDiff {
   const CharacterDiff({
@@ -43,19 +45,21 @@ class StringDiffer {
   /// Identifies unchanged prefix/suffix and handles the changing middle section.
   static List<CharacterDiff> calculateDiff(String oldString, String newString) {
     final List<CharacterDiff> diffs = [];
+    final oldCharacters = oldString.characters.toList(growable: false);
+    final newCharacters = newString.characters.toList(growable: false);
 
     // Handle empty strings
-    if (oldString.isEmpty && newString.isEmpty) {
+    if (oldCharacters.isEmpty && newCharacters.isEmpty) {
       return diffs;
     }
 
-    if (oldString.isEmpty) {
-      for (int i = 0; i < newString.length; i++) {
+    if (oldCharacters.isEmpty) {
+      for (int i = 0; i < newCharacters.length; i++) {
         diffs.add(
           CharacterDiff(
             index: i,
             oldChar: null,
-            newChar: newString[i],
+            newChar: newCharacters[i],
             changeType: DiffType.inserted,
           ),
         );
@@ -63,12 +67,12 @@ class StringDiffer {
       return diffs;
     }
 
-    if (newString.isEmpty) {
-      for (int i = 0; i < oldString.length; i++) {
+    if (newCharacters.isEmpty) {
+      for (int i = 0; i < oldCharacters.length; i++) {
         diffs.add(
           CharacterDiff(
             index: i,
-            oldChar: oldString[i],
+            oldChar: oldCharacters[i],
             newChar: null,
             changeType: DiffType.deleted,
           ),
@@ -79,20 +83,21 @@ class StringDiffer {
 
     // Find common prefix
     int prefixLength = 0;
-    final minLength = oldString.length < newString.length
-        ? oldString.length
-        : newString.length;
+    final minLength = oldCharacters.length < newCharacters.length
+        ? oldCharacters.length
+        : newCharacters.length;
     while (prefixLength < minLength &&
-        oldString[prefixLength] == newString[prefixLength]) {
+        oldCharacters[prefixLength] == newCharacters[prefixLength]) {
       prefixLength++;
     }
 
     // Find common suffix
     int suffixLength = 0;
-    final int oldEnd = oldString.length - 1;
-    final int newEnd = newString.length - 1;
+    final int oldEnd = oldCharacters.length - 1;
+    final int newEnd = newCharacters.length - 1;
     while (suffixLength < minLength - prefixLength &&
-        oldString[oldEnd - suffixLength] == newString[newEnd - suffixLength]) {
+        oldCharacters[oldEnd - suffixLength] ==
+            newCharacters[newEnd - suffixLength]) {
       suffixLength++;
     }
 
@@ -101,8 +106,8 @@ class StringDiffer {
       diffs.add(
         CharacterDiff(
           index: i,
-          oldChar: oldString[i],
-          newChar: newString[i],
+          oldChar: oldCharacters[i],
+          newChar: newCharacters[i],
           changeType: DiffType.unchanged,
         ),
       );
@@ -110,25 +115,25 @@ class StringDiffer {
 
     // Calculate the changing middle section
     final oldMiddleStart = prefixLength;
-    final oldMiddleEnd = oldString.length - suffixLength;
+    final oldMiddleEnd = oldCharacters.length - suffixLength;
     final newMiddleStart = prefixLength;
-    final newMiddleEnd = newString.length - suffixLength;
+    final newMiddleEnd = newCharacters.length - suffixLength;
 
-    final oldMiddle = oldString.substring(oldMiddleStart, oldMiddleEnd);
-    final newMiddle = newString.substring(newMiddleStart, newMiddleEnd);
+    final oldMiddle = oldCharacters.sublist(oldMiddleStart, oldMiddleEnd);
+    final newMiddle = newCharacters.sublist(newMiddleStart, newMiddleEnd);
 
     // Handle the middle section
     _addMiddleDiffs(diffs, oldMiddle, newMiddle, prefixLength);
 
     // Add unchanged suffix
     for (int i = 0; i < suffixLength; i++) {
-      final oldIndex = oldString.length - suffixLength + i;
-      final newIndex = newString.length - suffixLength + i;
+      final oldIndex = oldCharacters.length - suffixLength + i;
+      final newIndex = newCharacters.length - suffixLength + i;
       diffs.add(
         CharacterDiff(
           index: newIndex,
-          oldChar: oldString[oldIndex],
-          newChar: newString[newIndex],
+          oldChar: oldCharacters[oldIndex],
+          newChar: newCharacters[newIndex],
           changeType: DiffType.unchanged,
         ),
       );
@@ -138,8 +143,12 @@ class StringDiffer {
   }
 
   /// Add diffs for the changing middle section
-  static void _addMiddleDiffs(List<CharacterDiff> diffs, String oldMiddle,
-      String newMiddle, int offset) {
+  static void _addMiddleDiffs(
+    List<CharacterDiff> diffs,
+    List<String> oldMiddle,
+    List<String> newMiddle,
+    int offset,
+  ) {
     final maxLength = oldMiddle.length > newMiddle.length
         ? oldMiddle.length
         : newMiddle.length;

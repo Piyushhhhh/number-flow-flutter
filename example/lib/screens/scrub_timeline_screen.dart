@@ -14,9 +14,6 @@ class _ScrubTimelineScreenState extends State<ScrubTimelineScreen> {
   final double _endValue = 1000000;
   bool _isAutoPlaying = false;
 
-  double get _currentValue =>
-      _startValue + (_endValue - _startValue) * _scrubProgress;
-
   void _toggleAutoPlay() {
     setState(() {
       _isAutoPlaying = !_isAutoPlaying;
@@ -89,7 +86,7 @@ class _ScrubTimelineScreenState extends State<ScrubTimelineScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: NumberFlow(
-                value: _currentValue,
+                value: _endValue,
                 previousValue: _startValue,
                 format: const NumberFlowFormat(
                   prefix: '\$',

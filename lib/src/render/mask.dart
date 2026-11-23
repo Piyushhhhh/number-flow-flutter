@@ -6,7 +6,7 @@ class MaskConfig {
     this.enabled = true,
     this.fadeHeight = 0.2,
     this.clipBehavior = Clip.antiAlias,
-  });
+  }) : assert(fadeHeight >= 0 && fadeHeight <= 0.5);
 
   /// Whether masking is enabled
   final bool enabled;
@@ -38,17 +38,8 @@ class EdgeMask extends StatelessWidget {
       return child;
     }
 
-    // TODO: Implement edge masking
-    // - Use ShaderMask with LinearGradient
-    // - Create fade effect at top and bottom edges
-    // - Apply gradient stops based on fadeHeight
-    // - Use BlendMode.dstIn for proper masking
-    // - Handle clipBehavior appropriately
-
     return ShaderMask(
-      shaderCallback: (Rect bounds) {
-        return _createMaskGradient(bounds);
-      },
+      shaderCallback: _createMaskGradient,
       blendMode: BlendMode.dstIn,
       child: ClipRect(
         clipBehavior: config.clipBehavior,
@@ -107,11 +98,6 @@ class ContentClipper extends StatelessWidget {
         child: child,
       );
     }
-
-    // TODO: Implement rounded corner clipping
-    // - Use ClipRRect for rounded corners
-    // - Apply borderRadius if specified
-    // - Handle clipBehavior appropriately
 
     return ClipRRect(
       borderRadius: borderRadius!,

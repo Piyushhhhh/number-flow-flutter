@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// Provides shared AnimationController for synchronized NumberFlow animations
@@ -6,6 +8,7 @@ class NumberFlowGroup extends InheritedWidget {
     super.key,
     required this.groupKey,
     required this.controller,
+    required this.curve,
     required super.child,
   });
 
@@ -14,6 +17,9 @@ class NumberFlowGroup extends InheritedWidget {
 
   /// Shared animation controller for the group
   final AnimationController controller;
+
+  /// Curve applied consistently to every animation in the group.
+  final Curve curve;
 
   /// Get the NumberFlowGroup from context
   static NumberFlowGroup? of(BuildContext context) =>
@@ -25,9 +31,16 @@ class NumberFlowGroup extends InheritedWidget {
     return (group?.groupKey == groupKey) ? group : null;
   }
 
+  /// Restart the shared animation timeline from its beginning.
+  void restart() {
+    unawaited(controller.forward(from: 0));
+  }
+
   @override
   bool updateShouldNotify(NumberFlowGroup oldWidget) =>
-      groupKey != oldWidget.groupKey || controller != oldWidget.controller;
+      groupKey != oldWidget.groupKey ||
+      controller != oldWidget.controller ||
+      curve != oldWidget.curve;
 }
 
 /// Provider widget that creates and manages a NumberFlowGroup
@@ -66,6 +79,7 @@ class _NumberFlowGroupProviderState extends State<NumberFlowGroupProvider>
     super.initState();
     _controller = AnimationController(
       duration: widget.duration,
+      value: 1,
       vsync: this,
     );
   }
@@ -88,27 +102,7 @@ class _NumberFlowGroupProviderState extends State<NumberFlowGroupProvider>
   Widget build(BuildContext context) => NumberFlowGroup(
         groupKey: widget.groupKey,
         controller: _controller,
+        curve: widget.curve,
         child: widget.child,
       );
-
-  /// Start animation for all NumberFlow widgets in this group
-  void startGroupAnimation() {
-    // TODO: Implement group animation coordination
-    // - Reset and start the shared controller
-    // - Notify all NumberFlow widgets in the group
-    // - Handle animation state management
-
-    _controller.reset();
-    _controller.forward();
-  }
-
-  /// Stop animation for the group
-  void stopGroupAnimation() {
-    _controller.stop();
-  }
-
-  /// Reset animation for the group
-  void resetGroupAnimation() {
-    _controller.reset();
-  }
 }

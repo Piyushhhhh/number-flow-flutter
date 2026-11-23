@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_number_flow/flutter_number_flow.dart';
+
 import '../core/metrics_cache.dart';
 
-/// Animated presenter for individual glyphs with different animation styles
-class GlyphStack extends StatefulWidget {
+/// Animated presenter for an individual formatted-number glyph.
+class GlyphStack extends StatelessWidget {
   const GlyphStack({
     super.key,
     required this.oldGlyph,
@@ -13,80 +14,107 @@ class GlyphStack extends StatefulWidget {
     required this.animationStyle,
   });
 
-  /// Previous glyph (null if this is a new glyph)
+  /// Previous glyph (null if this glyph is being inserted).
   final String? oldGlyph;
 
-  /// Current glyph (null if this glyph was removed)
+  /// Current glyph (null if this glyph is being removed).
   final String? newGlyph;
 
-  /// Text style to apply to the glyph
+  /// Text style to apply to the glyph.
   final TextStyle textStyle;
 
-  /// Animation controller driving the transition
+  /// Animation driving the transition.
   final Animation<double> animation;
 
-  /// Style of animation to use
+  /// Style of animation to use.
   final NumberFlowAnimation animationStyle;
 
   @override
-  State<GlyphStack> createState() => _GlyphStackState();
-}
-
-class _GlyphStackState extends State<GlyphStack> {
-  late final TextMetricsCache _metricsCache;
-
-  @override
-  void initState() {
-    super.initState();
-    _metricsCache = TextMetricsCache();
-  }
-
-  @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: widget.animation,
+        animation: animation,
         builder: (context, child) => _buildAnimatedGlyph(),
       );
 
-  /// Build the animated glyph based on the animation style
   Widget _buildAnimatedGlyph() {
-    switch (widget.animationStyle) {
-      case NumberFlowAnimation.slide:
-        return _buildSlideAnimation();
-      case NumberFlowAnimation.crossFade:
-        return _buildCrossFadeAnimation();
+    final oldValue = oldGlyph;
+    final newValue = newGlyph;
+    final progress = animation.value.clamp(0.0, 1.0).toDouble();
+
+    if (oldValue == newValue) {
+      return _buildStaticGlyph(newValue ?? '');
     }
+    if (oldValue == null) {
+      return _buildInsertion(newValue!, progress);
+    }
+    if (newValue == null) {
+      return _buildDeletion(oldValue, progress);
+    }
+
+    return _buildReplacement(oldValue, newValue, progress);
   }
 
-  /// Build slide animation (vertical movement)
-  Widget _buildSlideAnimation() {
-    final String? oldGlyph = widget.oldGlyph;
-    final String? newGlyph = widget.newGlyph;
-
-    // If no animation needed, just show the current glyph
-    if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
-      final glyph = newGlyph ?? oldGlyph ?? '';
-      return SizedBox(
+  Widget _buildStaticGlyph(String glyph) => SizedBox(
         width: _getGlyphWidth(glyph),
         child: Align(
           alignment: Alignment.center,
-          child: Text(
-            glyph,
-            style: widget.textStyle,
-          ),
+          child: Text(glyph, style: textStyle),
         ),
       );
-    }
 
-    // Get metrics for consistent sizing
-    final width = _getGlyphWidth(newGlyph);
-    final height = _getGlyphHeight(newGlyph);
+  Widget _buildInsertion(String glyph, double progress) {
+    final height = _getGlyphHeight(glyph);
+    final offset = animationStyle == NumberFlowAnimation.slide
+        ? Offset(0, height * (1 - progress))
+        : Offset.zero;
 
-    // Animation progress
-    final progress = widget.animation.value;
+    return ClipRect(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        widthFactor: progress,
+        child: Opacity(
+          opacity: progress,
+          child: Transform.translate(
+            offset: offset,
+            child: Text(glyph, style: textStyle),
+          ),
+        ),
+      ),
+    );
+  }
 
-    // Calculate slide positions
-    final oldOffset = Offset(0, -height * progress);
-    final newOffset = Offset(0, height * (1 - progress));
+  Widget _buildDeletion(String glyph, double progress) {
+    final remaining = 1 - progress;
+    final height = _getGlyphHeight(glyph);
+    final offset = animationStyle == NumberFlowAnimation.slide
+        ? Offset(0, -height * progress)
+        : Offset.zero;
+
+    return ClipRect(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        widthFactor: remaining,
+        child: Opacity(
+          opacity: remaining,
+          child: Transform.translate(
+            offset: offset,
+            child: Text(glyph, style: textStyle),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplacement(
+    String oldValue,
+    String newValue,
+    double progress,
+  ) {
+    final oldSize = _getGlyphSize(oldValue);
+    final newSize = _getGlyphSize(newValue);
+    final width = oldSize.width + (newSize.width - oldSize.width) * progress;
+    final height =
+        oldSize.height > newSize.height ? oldSize.height : newSize.height;
+    final slide = animationStyle == NumberFlowAnimation.slide;
 
     return SizedBox(
       width: width,
@@ -95,20 +123,19 @@ class _GlyphStackState extends State<GlyphStack> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Old glyph sliding up
-            Transform.translate(
-              offset: oldOffset,
-              child: Text(
-                oldGlyph,
-                style: widget.textStyle,
+            Opacity(
+              opacity: slide ? 1 : 1 - progress,
+              child: Transform.translate(
+                offset: slide ? Offset(0, -height * progress) : Offset.zero,
+                child: Text(oldValue, style: textStyle),
               ),
             ),
-            // New glyph sliding in from below
-            Transform.translate(
-              offset: newOffset,
-              child: Text(
-                newGlyph,
-                style: widget.textStyle,
+            Opacity(
+              opacity: slide ? 1 : progress,
+              child: Transform.translate(
+                offset:
+                    slide ? Offset(0, height * (1 - progress)) : Offset.zero,
+                child: Text(newValue, style: textStyle),
               ),
             ),
           ],
@@ -117,73 +144,10 @@ class _GlyphStackState extends State<GlyphStack> {
     );
   }
 
-  /// Build cross-fade animation (opacity transition)
-  Widget _buildCrossFadeAnimation() {
-    final String? oldGlyph = widget.oldGlyph;
-    final String? newGlyph = widget.newGlyph;
+  Size _getGlyphSize(String glyph) =>
+      TextMetricsCache().getMetrics(glyph, textStyle).size;
 
-    // If no animation needed, just show the current glyph
-    if (oldGlyph == null || newGlyph == null || oldGlyph == newGlyph) {
-      final glyph = newGlyph ?? oldGlyph ?? '';
-      return SizedBox(
-        width: _getGlyphWidth(glyph),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            glyph,
-            style: widget.textStyle,
-          ),
-        ),
-      );
-    }
-
-    // Get metrics for consistent sizing
-    final width = _getGlyphWidth(newGlyph);
-    final height = _getGlyphHeight(newGlyph);
-
-    // Animation progress
-    final progress = widget.animation.value;
-
-    // Calculate opacities
-    final oldOpacity = 1.0 - progress;
-    final newOpacity = progress;
-
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Old glyph fading out
-          Opacity(
-            opacity: oldOpacity,
-            child: Text(
-              oldGlyph,
-              style: widget.textStyle,
-            ),
-          ),
-          // New glyph fading in
-          Opacity(
-            opacity: newOpacity,
-            child: Text(
-              newGlyph,
-              style: widget.textStyle,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Get the size for this glyph using the metrics cache
-  Size _getGlyphSize(String glyph) {
-    final metrics = _metricsCache.getMetrics(glyph, widget.textStyle);
-    return metrics.size;
-  }
-
-  /// Get the width for this glyph using the metrics cache
   double _getGlyphWidth(String glyph) => _getGlyphSize(glyph).width;
 
-  /// Get the height for this glyph using the metrics cache
   double _getGlyphHeight(String glyph) => _getGlyphSize(glyph).height;
 }
