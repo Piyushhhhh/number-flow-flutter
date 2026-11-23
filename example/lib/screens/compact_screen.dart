@@ -53,8 +53,6 @@ class _CompactScreenState extends State<CompactScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-
-                  // TODO: Implement compact notation NumberFlow
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -76,7 +74,6 @@ class _CompactScreenState extends State<CompactScreen> {
                       animationStyle: NumberFlowAnimation.slide,
                     ),
                   ),
-
                   const SizedBox(height: 8),
                   Text(
                     'Full: ${_followers.toInt().toString().replaceAllMapped(
@@ -85,7 +82,6 @@ class _CompactScreenState extends State<CompactScreen> {
                         )}',
                     style: const TextStyle(color: Colors.grey),
                   ),
-
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _updateFollowers,
@@ -109,8 +105,6 @@ class _CompactScreenState extends State<CompactScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-
-                  // TODO: Implement compact notation NumberFlow with different style
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -132,7 +126,6 @@ class _CompactScreenState extends State<CompactScreen> {
                       animationStyle: NumberFlowAnimation.slide,
                     ),
                   ),
-
                   const SizedBox(height: 8),
                   Text(
                     'Full: ${_downloads.toInt().toString().replaceAllMapped(
@@ -141,7 +134,6 @@ class _CompactScreenState extends State<CompactScreen> {
                         )}',
                     style: const TextStyle(color: Colors.grey),
                   ),
-
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _updateDownloads,

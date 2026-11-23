@@ -49,7 +49,7 @@ Add `flutter_number_flow` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_number_flow: ^0.1.0
+  flutter_number_flow: ^0.1.1
 ```
 
 Then run:
@@ -213,12 +213,11 @@ class _ScrubExampleState extends State<ScrubExample> {
 
   @override
   Widget build(BuildContext context) {
-    final currentValue = _startValue + (_endValue - _startValue) * _progress;
-    
     return Column(
       children: [
         NumberFlow(
-          value: currentValue,
+          value: _endValue,
+          previousValue: _startValue,
           scrubProgress: _progress,
           format: const NumberFlowFormat(
             prefix: '\$',
@@ -289,40 +288,33 @@ Flutter Number Flow is optimized for performance:
 - **Text Metrics Caching**: Glyph dimensions are cached to avoid repeated calculations
 - **Tabular Figures**: Uses `FontFeature.tabularFigures()` for consistent digit widths
 - **Efficient Diffing**: Only animates digits that actually change
-- **Minimal Rebuilds**: Smart widget composition minimizes unnecessary rebuilds
+- **Targeted Rebuilds**: Each animated glyph listens to the shared timeline
 
 ## ♿ Accessibility
 
 The widget follows Flutter accessibility best practices:
 
 - **Semantic Labels**: Screen readers announce the complete number value
-- **Proper Focus**: Supports keyboard navigation and focus management
 - **High Contrast**: Works well with system accessibility settings
 
 ## 🧪 Testing
 
-The package includes comprehensive tests:
+Run the unit and widget tests with:
 
 ```bash
 flutter test
 ```
 
-Run golden tests to verify visual output:
-
-```bash
-flutter test --update-goldens
-```
-
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [contributing guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
+Contributions are welcome! Please read our [contributing guide](CONTRIBUTING.md).
 
 ### Development Setup
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/example/flutter_number_flow.git
-   cd flutter_number_flow
+   git clone https://github.com/Piyushhhhh/number-flow-flutter.git
+   cd number-flow-flutter
    ```
 
 2. Get dependencies:
@@ -358,9 +350,8 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and migration gu
 ## 💬 Support
 
 - 📖 [Documentation](https://pub.dev/documentation/flutter_number_flow/latest/)
-- 🐛 [Issue Tracker](https://github.com/example/flutter_number_flow/issues)
-- 💬 [Discussions](https://github.com/example/flutter_number_flow/discussions)
-- 📧 [Email Support](mailto:support@example.com)
+- 🐛 [Issue Tracker](https://github.com/Piyushhhhh/number-flow-flutter/issues)
+- 💬 [Discussions](https://github.com/Piyushhhhh/number-flow-flutter/discussions)
 
 ---
 

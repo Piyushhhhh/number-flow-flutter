@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-23
+
+### Fixed
+- Removed glyphs now shrink and fade out instead of remaining on screen (#1, #2)
+- Inserted glyphs animate into the layout without an abrupt width jump
+- `scrubProgress` now directly drives manual transitions
+- Grouped widgets now use their shared controller and provider curve
+- Completed grouped widgets no longer replay stale transitions
+- `previousValue` now animates on the initial build
+- Formatter options are honored during lazy initialization
+- Character diffing now handles Unicode grapheme clusters safely
+
+### Changed
+- Added behavioral coverage for deletion, insertion, scrubbing, and groups
+- Corrected package documentation and repository links
+- Raised the minimum Dart SDK to 3.0 to match `intl` 0.19
+
 ## [0.1.0] - 2024-01-15
 
 ### Added
@@ -21,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Accessibility support with proper semantics
 - Material Design 3 theme support
 - Comprehensive example app with 5 demo screens
-- Full test coverage including golden tests
+- Unit and widget test coverage
 - Complete API documentation
 
 ### Features
@@ -36,8 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Details
 - Minimum Flutter version: 3.0.0
-- Minimum Dart SDK: 2.17.0
-- Dependencies: `flutter`, `intl`
+- Minimum Dart SDK: 3.0.0
+- Dependencies: `characters`, `flutter`, `intl`
 - Platform support: iOS, Android, Web, Desktop
 - Null safety: Full null safety support
 - Material 3: Built with Material Design 3 principles
@@ -47,14 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API documentation for all public classes
 - Example app demonstrating all features
 - Migration guide and best practices
-- Contributing guidelines and code of conduct
+- Contributing guidelines
 
 ### Testing
 - Unit tests for core functionality
 - Widget tests for UI components
-- Golden tests for visual regression
-- Integration tests for complete workflows
-- Performance benchmarks and profiling
 
 ---
 
@@ -87,10 +101,9 @@ This is the initial release, no migration needed.
 
 We welcome feedback and contributions! Please:
 
-- 🐛 [Report bugs](https://github.com/example/flutter_number_flow/issues)
-- 💡 [Request features](https://github.com/example/flutter_number_flow/discussions)
-- 🤝 [Contribute code](https://github.com/example/flutter_number_flow/pulls)
-- 📧 [Contact us](mailto:support@example.com)
+- 🐛 [Report bugs](https://github.com/Piyushhhhh/number-flow-flutter/issues)
+- 💡 [Request features](https://github.com/Piyushhhhh/number-flow-flutter/discussions)
+- 🤝 [Contribute code](https://github.com/Piyushhhhh/number-flow-flutter/pulls)
 
 ---
 

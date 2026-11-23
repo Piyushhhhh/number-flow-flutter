@@ -1,35 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_number_flow/flutter_number_flow.dart';
+
 import '../core/diff.dart';
 import '../render/glyph_stack.dart';
 import '../render/mask.dart';
 
-/// A Flutter widget that animates number changes with smooth, customizable transitions.
-///
-/// The [NumberFlow] widget displays numbers with smooth animations when the value changes.
-/// It supports multiple animation styles, locale-aware formatting, and performance optimizations.
-///
-/// Example usage:
-/// ```dart
-/// NumberFlow(
-///   value: 1234.56,
-///   format: const NumberFlowFormat(
-///     prefix: '\$',
-///     minimumFractionDigits: 2,
-///   ),
-///   textStyle: const TextStyle(fontSize: 32),
-///   animationStyle: NumberFlowAnimation.slide,
-/// )
-/// ```
-///
-/// The widget only animates digits that actually change, keeping unchanged digits stable
-/// for a professional appearance. It uses tabular figures for consistent spacing and
-/// caches text metrics for optimal performance.
-///
-/// See also:
-/// * [NumberFlowFormat] for formatting options
-/// * [NumberFlowAnimation] for available animation styles
-/// * [NumberFlowGroupProvider] for synchronizing multiple widgets
+/// Displays a formatted number and animates only the glyphs that change.
 class NumberFlow extends StatefulWidget {
   const NumberFlow({
     super.key,
@@ -47,40 +25,43 @@ class NumberFlow extends StatefulWidget {
     this.maskConfig = const MaskConfig(),
   });
 
-  /// Current number value to display
+  /// Current number value to display.
   final num value;
 
-  /// Previous number value for animation (null means no animation)
+  /// Explicit animation start value, or null to use the preceding [value].
   final num? previousValue;
 
-  /// Text style for the number display
+  /// Text style for the number display.
   final TextStyle? textStyle;
 
-  /// Animation duration
+  /// Animation duration when this widget is not controlled by a group.
   final Duration duration;
 
-  /// Animation curve
+  /// Animation curve when this widget is not controlled by a group.
   final Curve curve;
 
-  /// Animation style to use
+  /// Animation style to use.
   final NumberFlowAnimation animationStyle;
 
-  /// Number formatting configuration
+  /// Number formatting configuration.
   final NumberFlowFormat? format;
 
-  /// Text alignment within the widget
+  /// Text alignment within the available width.
   final TextAlign textAlign;
 
-  /// Group key for synchronized animations (null means no grouping)
+  /// Key of the nearest [NumberFlowGroupProvider] to use.
   final String? groupKey;
 
-  /// Manual animation progress override (0.0 to 1.0, null means automatic)
+  /// Manual transition progress from [previousValue] to [value].
+  ///
+  /// Values outside 0–1 are clamped. Supplying a value disables automatic
+  /// playback without affecting other widgets in a group.
   final double? scrubProgress;
 
-  /// Whether to enable edge masking
+  /// Whether to enable edge masking.
   final bool enableMask;
 
-  /// Configuration for edge masking
+  /// Configuration for edge masking.
   final MaskConfig maskConfig;
 
   @override
@@ -88,147 +69,198 @@ class NumberFlow extends StatefulWidget {
 }
 
 class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
-  late AnimationController _localController;
+  late final AnimationController _localController;
+  late AnimationController _effectiveController;
   late Animation<double> _animation;
   late NumberFormatter _formatter;
 
+  NumberFlowGroup? _group;
   String _currentText = '';
   String _previousText = '';
-  List<CharacterDiff> _diffs = [];
+  List<CharacterDiff> _diffs = const [];
+  bool _initialAnimationScheduled = false;
+  bool _initialAnimationPending = false;
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize local animation controller
     _localController = AnimationController(
       duration: widget.duration,
+      value: 1,
       vsync: this,
     );
+    _effectiveController = _localController;
+    _effectiveController.addStatusListener(_handleAnimationStatus);
+    _animation = _effectiveController.drive(CurveTween(curve: widget.curve));
 
-    _animation = CurvedAnimation(
-      parent: _localController,
-      curve: widget.curve,
-    );
-
-    // Initialize formatter
     _formatter = NumberFormatter(widget.format ?? const NumberFlowFormat());
     _formatter.initialize();
+    _initializeFormattedValues();
+  }
 
-    // Format initial values
-    _updateFormattedValues();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _configureAnimation(_findGroup());
+    _scheduleInitialAnimation();
   }
 
   @override
   void didUpdateWidget(NumberFlow oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    bool shouldAnimate = false;
-
-    // Update animation duration if changed
     if (widget.duration != oldWidget.duration) {
       _localController.duration = widget.duration;
     }
 
-    // Update animation curve if changed
-    if (widget.curve != oldWidget.curve) {
-      _animation = CurvedAnimation(
-        parent: _getEffectiveController(),
-        curve: widget.curve,
-      );
+    if (widget.groupKey != oldWidget.groupKey) {
+      _configureAnimation(_findGroup());
+    } else if (widget.curve != oldWidget.curve) {
+      _configureAnimation(_group);
     }
 
-    // Update formatter if format changed
-    if (widget.format != oldWidget.format) {
-      _formatter = NumberFormatter(widget.format ?? const NumberFlowFormat());
-      _formatter.initialize();
-      shouldAnimate = true;
-    }
+    final endpointsChanged = widget.value != oldWidget.value ||
+        widget.previousValue != oldWidget.previousValue ||
+        widget.format != oldWidget.format;
 
-    // Check if value changed - this is the main trigger for animation
-    if (widget.value != oldWidget.value) {
-      shouldAnimate = true;
-    }
+    if (endpointsChanged) {
+      _initialAnimationPending = false;
+      final oldTargetText = _currentText;
 
-    // Trigger animation if needed
-    if (shouldAnimate) {
-      // Store the old value as previous for animation
-      final oldValue = oldWidget.value;
-      _updateFormattedValues(oldValue);
+      if (widget.format != oldWidget.format) {
+        _formatter = NumberFormatter(widget.format ?? const NumberFlowFormat());
+        _formatter.initialize();
+      }
+
+      _currentText = _formatter.formatNumber(widget.value);
+      _previousText = widget.previousValue == null
+          ? oldTargetText
+          : _formatter.formatNumber(widget.previousValue!);
+      _calculateDiffs();
+
+      if (_hasTransition) {
+        _startAnimation();
+      }
+    } else if (oldWidget.scrubProgress != null &&
+        widget.scrubProgress == null &&
+        _hasTransition) {
       _startAnimation();
     }
   }
 
   @override
   void dispose() {
+    _effectiveController.removeStatusListener(_handleAnimationStatus);
     _localController.dispose();
     super.dispose();
   }
 
-  /// Get the effective animation controller (group or local)
-  AnimationController _getEffectiveController() {
-    if (widget.groupKey != null) {
-      final group = NumberFlowGroup.findByKey(context, widget.groupKey!);
-      return group?.controller ?? _localController;
-    }
-    return _localController;
+  NumberFlowGroup? _findGroup() {
+    final key = widget.groupKey;
+    return key == null ? null : NumberFlowGroup.findByKey(context, key);
   }
 
-  /// Update formatted text values and calculate diffs
-  void _updateFormattedValues([num? oldValue]) {
-    _previousText = _currentText;
-    _currentText = _formatter.formatNumber(widget.value);
-
-    // Use the provided old value, widget.previousValue, or current text as fallback
-    if (oldValue != null) {
-      _previousText = _formatter.formatNumber(oldValue);
-    } else if (widget.previousValue != null) {
-      _previousText = _formatter.formatNumber(widget.previousValue!);
+  void _configureAnimation(NumberFlowGroup? group) {
+    final controller = group?.controller ?? _localController;
+    if (!identical(controller, _effectiveController)) {
+      _effectiveController.removeStatusListener(_handleAnimationStatus);
+      _effectiveController = controller;
+      _effectiveController.addStatusListener(_handleAnimationStatus);
     }
 
+    _group = group;
+    _animation = _effectiveController.drive(
+      CurveTween(curve: group?.curve ?? widget.curve),
+    );
+  }
+
+  void _initializeFormattedValues() {
+    _currentText = _formatter.formatNumber(widget.value);
+    _previousText = widget.previousValue == null
+        ? _currentText
+        : _formatter.formatNumber(widget.previousValue!);
+    _calculateDiffs();
+  }
+
+  void _calculateDiffs() {
     _diffs = StringDiffer.calculateDiff(_previousText, _currentText);
   }
 
-  /// Start the animation
+  bool get _hasTransition => _diffs.any((diff) => diff.oldChar != diff.newChar);
+
+  void _scheduleInitialAnimation() {
+    if (_initialAnimationScheduled ||
+        widget.previousValue == null ||
+        widget.scrubProgress != null ||
+        !_hasTransition) {
+      return;
+    }
+
+    _initialAnimationScheduled = true;
+    _initialAnimationPending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_initialAnimationPending) {
+        return;
+      }
+      _initialAnimationPending = false;
+      _startAnimation();
+    });
+  }
+
   void _startAnimation() {
-    // Don't auto-animate if we're in manual scrub mode
     if (widget.scrubProgress != null) {
       return;
     }
 
-    final controller = _getEffectiveController();
-    controller.reset();
-    controller.forward();
+    final group = _group;
+    if (group != null) {
+      group.restart();
+    } else {
+      unawaited(_localController.forward(from: 0));
+    }
+  }
+
+  void _handleAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed ||
+        !mounted ||
+        widget.scrubProgress != null ||
+        !_hasTransition) {
+      return;
+    }
+
+    setState(() {
+      _previousText = _currentText;
+      _calculateDiffs();
+    });
+  }
+
+  Animation<double> get _displayAnimation {
+    final progress = widget.scrubProgress;
+    if (progress == null) {
+      return _animation;
+    }
+
+    final clamped = progress.clamp(0.0, 1.0).toDouble();
+    final curved = widget.curve.transform(clamped).clamp(0.0, 1.0).toDouble();
+    return AlwaysStoppedAnimation<double>(curved);
   }
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextStyle = _getEffectiveTextStyle();
-
-    Widget content = AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) => _buildNumberDisplay(effectiveTextStyle),
-    );
-
-    // Apply text alignment
+    final textStyle = _getEffectiveTextStyle();
+    Widget content = _buildNumberDisplay(textStyle, _displayAnimation);
     content = _applyAlignment(content);
 
-    // Apply edge masking if enabled
     if (widget.enableMask) {
-      content = EdgeMask(
-        config: widget.maskConfig,
-        child: content,
-      );
+      content = EdgeMask(config: widget.maskConfig, child: content);
     }
 
-    // Add semantics for accessibility
     return Semantics(
       label: _currentText,
       child: ExcludeSemantics(child: content),
     );
   }
 
-  /// Get effective text style with tabular figures
   TextStyle _getEffectiveTextStyle() {
     final baseStyle = widget.textStyle ?? DefaultTextStyle.of(context).style;
     return baseStyle.copyWith(
@@ -239,31 +271,26 @@ class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
     );
   }
 
-  /// Build the number display using glyph stacks
-  Widget _buildNumberDisplay(TextStyle textStyle) {
-    final glyphWidgets = <Widget>[];
-
-    for (final diff in _diffs) {
-      glyphWidgets.add(
-        GlyphStack(
-          oldGlyph: diff.oldChar,
-          newGlyph: diff.newChar,
-          textStyle: textStyle,
-          animation: _animation,
-          animationStyle: widget.animationStyle,
-        ),
+  Widget _buildNumberDisplay(
+    TextStyle textStyle,
+    Animation<double> animation,
+  ) =>
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          for (final diff in _diffs)
+            GlyphStack(
+              oldGlyph: diff.oldChar,
+              newGlyph: diff.newChar,
+              textStyle: textStyle,
+              animation: animation,
+              animationStyle: widget.animationStyle,
+            ),
+        ],
       );
-    }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: glyphWidgets,
-    );
-  }
-
-  /// Apply text alignment to content
   Widget _applyAlignment(Widget content) {
     switch (widget.textAlign) {
       case TextAlign.left:
@@ -275,7 +302,7 @@ class _NumberFlowState extends State<NumberFlow> with TickerProviderStateMixin {
       case TextAlign.center:
         return Align(alignment: Alignment.center, child: content);
       case TextAlign.justify:
-        return content; // No special alignment for justify
+        return content;
     }
   }
 }

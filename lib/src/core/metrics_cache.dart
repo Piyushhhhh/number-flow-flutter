@@ -67,12 +67,6 @@ class TextMetricsCache {
 
   /// Measure text using TextPainter
   CachedTextMetrics _measureText(String glyph, TextStyle textStyle) {
-    // TODO: Implement text measurement using TextPainter
-    // - Create TextPainter with the glyph and style
-    // - Layout the text
-    // - Extract size and baseline information
-    // - Return CachedTextMetrics
-
     final textPainter = TextPainter(
       text: TextSpan(text: glyph, style: textStyle),
       textDirection: TextDirection.ltr,

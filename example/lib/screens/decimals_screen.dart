@@ -50,8 +50,6 @@ class _DecimalsScreenState extends State<DecimalsScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-
-                  // TODO: Implement temperature NumberFlow with decimal formatting
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -86,7 +84,6 @@ class _DecimalsScreenState extends State<DecimalsScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _updateTemperature,
@@ -108,8 +105,6 @@ class _DecimalsScreenState extends State<DecimalsScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-
-                  // TODO: Implement price NumberFlow with currency formatting
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -132,7 +127,6 @@ class _DecimalsScreenState extends State<DecimalsScreen> {
                       animationStyle: NumberFlowAnimation.slide,
                     ),
                   ),
-
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _updatePrice,

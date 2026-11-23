@@ -53,8 +53,6 @@ class _GroupSyncScreenState extends State<GroupSyncScreen> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 32),
-
-            // TODO: Implement NumberFlowGroupProvider to synchronize animations
             NumberFlowGroupProvider(
               groupKey: 'financials',
               duration: const Duration(milliseconds: 1200),
@@ -94,16 +92,12 @@ class _GroupSyncScreenState extends State<GroupSyncScreen> {
                 ],
               ),
             ),
-
             const SizedBox(height: 32),
-
             ElevatedButton(
               onPressed: _updateFinancials,
               child: const Text('Update Quarterly Report'),
             ),
-
             const SizedBox(height: 16),
-
             const Text(
               'Notice how all three numbers animate simultaneously when updated. '
               'This is achieved using NumberFlowGroup synchronization.',
@@ -142,8 +136,6 @@ class _GroupSyncScreenState extends State<GroupSyncScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-
-                  // TODO: Implement synchronized NumberFlow widgets
                   NumberFlow(
                     value: value,
                     previousValue: previousValue,

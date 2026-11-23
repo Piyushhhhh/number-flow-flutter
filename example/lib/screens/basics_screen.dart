@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_number_flow/flutter_number_flow.dart';
 
@@ -77,12 +79,12 @@ class _BasicsScreenState extends State<BasicsScreen> {
                     ],
                   ),
                   border: Border.all(
-                    color: const Color(0xFF00D4FF).withOpacity(0.4),
+                    color: const Color(0xFF00D4FF).withValues(alpha: 0.4),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF00D4FF).withOpacity(0.2),
+                      color: const Color(0xFF00D4FF).withAlpha(51),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -127,7 +129,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
                       borderRadius: BorderRadius.circular(16),
                       color: const Color(0xFF1A1A24),
                       border: Border.all(
-                        color: const Color(0xFF00D4FF).withOpacity(0.3),
+                        color: const Color(0xFF00D4FF).withAlpha(77),
                         width: 1,
                       ),
                     ),
@@ -155,7 +157,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF00D4FF).withOpacity(0.4),
+                      color: const Color(0xFF00D4FF).withAlpha(102),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -191,7 +193,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: const Color(0xFFE1E1E6).withOpacity(0.7),
+                  color: const Color(0xFFE1E1E6).withAlpha(179),
                   height: 1.5,
                 ),
               ),

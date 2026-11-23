@@ -1,7 +1,6 @@
 import 'package:flutter_number_flow/flutter_number_flow.dart';
 import 'package:intl/intl.dart';
 
-/// Configuration for number formatting
 /// Configuration class for formatting numbers in [NumberFlow] widgets.
 ///
 /// This class provides comprehensive options for formatting numbers including
@@ -39,7 +38,13 @@ class NumberFlowFormat {
     this.suffix,
     this.minimumFractionDigits,
     this.maximumFractionDigits,
-  });
+  })  : assert(minimumFractionDigits == null || minimumFractionDigits >= 0),
+        assert(maximumFractionDigits == null || maximumFractionDigits >= 0),
+        assert(
+          minimumFractionDigits == null ||
+              maximumFractionDigits == null ||
+              minimumFractionDigits <= maximumFractionDigits,
+        );
 
   /// Locale for number formatting (e.g., 'en_US', 'de_DE')
   final String? locale;
@@ -58,6 +63,27 @@ class NumberFlowFormat {
 
   /// Maximum number of fraction digits to display
   final int? maximumFractionDigits;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NumberFlowFormat &&
+          locale == other.locale &&
+          notation == other.notation &&
+          prefix == other.prefix &&
+          suffix == other.suffix &&
+          minimumFractionDigits == other.minimumFractionDigits &&
+          maximumFractionDigits == other.maximumFractionDigits;
+
+  @override
+  int get hashCode => Object.hash(
+        locale,
+        notation,
+        prefix,
+        suffix,
+        minimumFractionDigits,
+        maximumFractionDigits,
+      );
 }
 
 /// Wrapper around intl package for number formatting
@@ -87,8 +113,9 @@ class NumberFormatter {
 
   /// Format a number according to the configuration
   String formatNumber(num value) {
-    // Initialize if not done already
-    _numberFormat ??= NumberFormat();
+    if (_numberFormat == null) {
+      initialize();
+    }
 
     // Format the number
     String formatted = _numberFormat!.format(value);
@@ -106,7 +133,9 @@ class NumberFormatter {
 
   /// Get the locale string for this formatter
   String get localeString {
-    // TODO: Return the locale string, defaulting to system locale if null
-    return format.locale ?? 'en_US'; // Placeholder
+    if (_numberFormat == null) {
+      initialize();
+    }
+    return format.locale ?? _numberFormat!.locale;
   }
 }
