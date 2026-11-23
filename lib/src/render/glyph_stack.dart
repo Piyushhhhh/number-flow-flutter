@@ -49,12 +49,34 @@ class _GlyphStackState extends State<GlyphStack> {
 
   /// Build the animated glyph based on the animation style
   Widget _buildAnimatedGlyph() {
+    final String? oldGlyph = widget.oldGlyph;
+    if (oldGlyph != null && widget.newGlyph == null) {
+      return _buildExitAnimation(oldGlyph);
+    }
     switch (widget.animationStyle) {
       case NumberFlowAnimation.slide:
         return _buildSlideAnimation();
       case NumberFlowAnimation.crossFade:
         return _buildCrossFadeAnimation();
     }
+  }
+
+  /// Build exit animation for a removed glyph (shrinks and fades to nothing)
+  Widget _buildExitAnimation(String oldGlyph) {
+    final remaining = (1.0 - widget.animation.value).clamp(0.0, 1.0);
+    return ClipRect(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        widthFactor: remaining,
+        child: Opacity(
+          opacity: remaining,
+          child: Text(
+            oldGlyph,
+            style: widget.textStyle,
+          ),
+        ),
+      ),
+    );
   }
 
   /// Build slide animation (vertical movement)

@@ -2,7 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_number_flow/flutter_number_flow.dart';
 
+Widget _currencyFlow(num value, NumberFlowAnimation style, {Key? key}) =>
+    MaterialApp(
+      home: Scaffold(
+        body: NumberFlow(
+          key: key,
+          value: value,
+          animationStyle: style,
+          format: const NumberFlowFormat(
+            prefix: r'$',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          ),
+        ),
+      ),
+    );
+
+double _glyphRowWidth(WidgetTester tester) {
+  final row = find.descendant(
+    of: find.byType(NumberFlow),
+    matching: find.byType(Row),
+  );
+  return tester.getSize(row).width;
+}
+
 void main() {
+  for (final style in NumberFlowAnimation.values) {
+    testWidgets('removed glyphs leave no width behind ($style)',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(_currencyFlow(1993.41, style));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(_currencyFlow(0, style));
+      await tester.pumpAndSettle();
+      final shrunkWidth = _glyphRowWidth(tester);
+
+      await tester.pumpWidget(_currencyFlow(0, style, key: UniqueKey()));
+      await tester.pumpAndSettle();
+
+      expect(shrunkWidth, _glyphRowWidth(tester));
+    });
+  }
+
   group('NumberFlow Widget Tests', () {
     testWidgets('NumberFlow displays value correctly',
         (WidgetTester tester) async {
